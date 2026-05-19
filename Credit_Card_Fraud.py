@@ -3,6 +3,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score
 
 
 #-------------数据分析---------------
@@ -32,16 +35,23 @@ x, y = df.drop('Class', axis = 1), df['Class']
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
 # --------------------随机森林------------------
-# forest = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced') # n_estimators:森林中树个数
-# forest.fit(x_train, y_train)
+forest = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced') # n_estimators:森林中树个数
+forest.fit(x_train, y_train)
 # yf_pre = forest.predict(x_test)
 # print(classification_report(y_test,yf_pre))
 
 # -------------------逻辑回归------------------
-lr= LogisticRegression(max_iter= 1000, random_state=42, class_weight='balanced')  # max_iter:迭代次数
-lr.fit(x_train, y_train)
-yr_pre = lr.predict(x_test)
-print(classification_report(y_test,yr_pre))
+# lr= LogisticRegression(max_iter= 1000, random_state=42, class_weight='balanced')  # max_iter:迭代次数
+# lr.fit(x_train, y_train)
+# yr_pre = lr.predict(x_test)
+# print(classification_report(y_test,yr_pre))
+
+
+# ConfusionMatrixDisplay.from_estimator(forest, x_test, y_test)
+# plt.title("Confusion Matrix - Fraud Detection")
+# plt.show()
+y_prob = forest.predict_proba(x_test)[:, 1]
+print(roc_auc_score(y_test, y_prob))
 
 
 # --------------------conclusion-------------------
